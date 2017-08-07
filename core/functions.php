@@ -679,7 +679,7 @@ function showSingleEpisode($singleEpisode,$justTitle) {
                     }
 
 
-                            	//Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
+                                //Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
                             if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
                             $resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" alt="'.$thisPodcastEpisodeData[0].'" />';
                             }
@@ -866,14 +866,14 @@ function random_str($size) {
 
 function detectMobileDevice() {
 
-//Some of the main mobile devices
-$iPod = stripos($_SERVER['HTTP_USER_AGENT'],"iPod") !== False;
-$iPhone = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone") !== False;
-$iPad = stripos($_SERVER['HTTP_USER_AGENT'],"iPad") !== False;
-$Android= stripos($_SERVER['HTTP_USER_AGENT'],"Android") !== False;
-$webOS= stripos($_SERVER['HTTP_USER_AGENT'],"webOS") !== False;
-$Blackberry= stripos($_SERVER['HTTP_USER_AGENT'],"BlackBerry") !== False;
-$Kindle= stripos($_SERVER['HTTP_USER_AGENT'],"Kindle") !== False;
+    //Some of the main mobile devices
+    $iPod = stripos($_SERVER['HTTP_USER_AGENT'],"iPod") !== False;
+    $iPhone = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone") !== False;
+    $iPad = stripos($_SERVER['HTTP_USER_AGENT'],"iPad") !== False;
+    $Android= stripos($_SERVER['HTTP_USER_AGENT'],"Android") !== False;
+    $webOS= stripos($_SERVER['HTTP_USER_AGENT'],"webOS") !== False;
+    $Blackberry= stripos($_SERVER['HTTP_USER_AGENT'],"BlackBerry") !== False;
+    $Kindle= stripos($_SERVER['HTTP_USER_AGENT'],"Kindle") !== False;
 
     echo $iPod;
     echo $iPhone;
@@ -1547,8 +1547,6 @@ function validateSingleEpisode ($episodeFile) {
 
 }
 
-
-
 //DETECT WHETHER USER IS LOGGED-IN OR NOT
 function isUserLogged () {
     //// Security code (Register Globals ON)
@@ -1560,6 +1558,31 @@ function isUserLogged () {
     if(isset($_SESSION["user_session"]) AND $_SESSION["user_session"]==$username AND md5($_SESSION["password_session"])==$userpassword) { return TRUE; }
     else { return FALSE; }
 }
+
+// POST DOWNLOAD EVENT TO GOOGLE ANALYTICS
+require_once($absoluteurl.'components/ss-ga.class.php');
+
+function postToGA($filename) {
+    // If we don't have an analytics ID or the user is logged in, don't post to GA
+    if (isUserLogged() OR !isset($podcast_ga_id)) {
+        return False;
+    }
+
+    // Snag just the domain name
+    $pg_domain = preg_replace('/\//', '', preg_replace('/https?:\/\//', '', $url));
+
+    // Set up the ssga client
+    $ssga = new ssga($podcast_ga_id, $pg_domain);
+    // Post to GA
+    $ssga->set_event('Downloads', 'Download Type', $filename);
+    $ssga->send();
+    $ssga->reset();
+
+    return True;
+}
+
+
+
 
 
 // Is the episode set to a future date?

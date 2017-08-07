@@ -51,15 +51,15 @@ if(isUserLogged()) {
 
             if (strlen($description)<$descmax) { // (if long description IS NOT too long
 
-            	$description = stripslashes($description);
-            	$description = strip_tags($description);
-            	$description = htmlspecialchars($description);
-            	$description = depurateContent($description);
-            	$podcast_description = $description;
+                $description = stripslashes($description);
+                $description = strip_tags($description);
+                $description = htmlspecialchars($description);
+                $description = depurateContent($description);
+                $podcast_description = $description;
 
             }else { //if description is more than max characters allowed
 
-            	$PG_mainbody .= "<p>"._("The podcast description is too long and will be ignored.")."<br />"._("Max:")." $descmax "._("characters")." - "._("Actual Length")." ".strlen($description)." "._("characters").".</p>";
+                $PG_mainbody .= "<p>"._("The podcast description is too long and will be ignored.")."<br />"._("Max:")." $descmax "._("characters")." - "._("Actual Length")." ".strlen($description)." "._("characters").".</p>";
 
             } // end of description lenght checking
         }else{
@@ -161,6 +161,7 @@ if(isUserLogged()) {
             <br /><br />
             <p><label for="authoremail"><b>'._("Author's email address").'</b></label></p>
             <input name="authoremail" type="text" id="title" size="50" maxlength="255" value="'.$author_email.'">
+            <br /><br />
             <p><label for="gaId"><b>'._("Google Analytics ID").'</b></label></p>
             <input name="gaId" type="text" id="gaId" size="50" maxlength="16" value="'.$podcast_ga_id.'">';
 
@@ -186,14 +187,14 @@ $listWithLanguages = languagesList($absoluteurl,FALSE);
 
 
             $PG_mainbody .= '
-            	<option value="' . $key . '"';
+                <option value="' . $key . '"';
 
             if ($feed_language == $key) {
-            	$PG_mainbody .= ' selected';
+                $PG_mainbody .= ' selected';
             }
 
             $PG_mainbody .= '>' . $val . '</option>
-            	';
+                ';
 
 
 

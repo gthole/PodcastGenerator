@@ -17,14 +17,6 @@ if (isset($_REQUEST['GLOBALS']) OR isset($_REQUEST['absoluteurl']) OR isset($_RE
 
 include("config.php");
 include($absoluteurl."core/functions.php");
-require_once($absoluteurl.'core/ss-ga.class.php');
-
-// Snag just the domain name
-$pg_domain = preg_replace('/\//', '', preg_replace('/https?:\/\//', '', $url));
-
-// Set up the ssga client
-$ssga = new ssga($podcast_ga_id, $pg_domain);
-
 
 $filename = $_GET['name'];
 
@@ -39,10 +31,7 @@ if(isset($filename))
     // Check that the file exists before sending
     if ( file_exists($filename_path) )
     {
-        // Post to GA
-        $ssga->set_event('Downloads', 'Download Type', $filename);
-        $ssga->send();
-        $ssga->reset();
+        postToGA($filename);
 
         // If we have a mobile device, force the download
         if (detectMobileDevice())
@@ -77,7 +66,7 @@ if(isset($filename))
         } else {
             // Just redirect to the full file
             header('Location: ' . $url.$upload_path.$filename);
-    		exit();
+            exit();
         }
     }
 }
