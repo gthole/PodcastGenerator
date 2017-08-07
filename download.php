@@ -1,15 +1,15 @@
-<?php 
+<?php
 ############################################################
 # PODCAST GENERATOR
 #
 # Created by Alberto Betella
 # http://podcastgen.sourceforge.net
-# 
+#
 # This is Free Software released under the GNU/GPL License.
 ############################################################
 
 ########### Security code, avoids cross-site scripting (Register Globals ON)
-if (isset($_REQUEST['GLOBALS']) OR isset($_REQUEST['absoluteurl']) OR isset($_REQUEST['amilogged']) OR isset($_REQUEST['theme_path'])) { exit; } 
+if (isset($_REQUEST['GLOBALS']) OR isset($_REQUEST['absoluteurl']) OR isset($_REQUEST['amilogged']) OR isset($_REQUEST['theme_path'])) { exit; }
 ########### End
 
 //// FORCE DOWNLOAD OF SUPPORTED FILES (e.g. files don't play in the browser, even when a plugin is installed)
@@ -17,46 +17,68 @@ if (isset($_REQUEST['GLOBALS']) OR isset($_REQUEST['absoluteurl']) OR isset($_RE
 
 include("config.php");
 include($absoluteurl."core/functions.php");
+require_once($absoluteurl.'core/ss-ga.class.php');
+
+// Snag just the domain name
+$pg_domain = preg_replace('/\//', '', preg_replace('/https?:\/\//', '', $url));
+
+// Set up the ssga client
+$ssga = new ssga($podcast_ga_id, $pg_domain);
 
 
-$filename = $_GET['filename'];
+$filename = $_GET['name'];
 
-//Clean variable, avoid downloading of file outside podcast generator root directory.
-$filename = str_replace("/", "", $filename); // Replace / in the filename 
-$filename = str_replace("\\", "", $filename); // Replace \ in the filename
+if(isset($filename))
+{
+    // Clean variable, avoid downloading of file outside podcast generator root directory.
+    $filename = str_replace("/", "", $filename); // Replace / in the filename
+    $filename = str_replace("\\", "", $filename); // Replace \ in the filename
 
-$filename_path = $absoluteurl.$upload_dir.$filename; // absolute path of the filename to download
+    $filename_path = $absoluteurl.$upload_dir.$filename; // absolute path of the filename to download
 
-if (file_exists($filename_path) ) {
-	
-	$file_media = divideFilenameFromExtension($filename);
-	
-	$fileData = checkFileType($file_media[1],$absoluteurl);
+    // Check that the file exists before sending
+    if ( file_exists($filename_path) )
+    {
+        // Post to GA
+        $ssga->set_event('Downloads', 'Download Type', $filename);
+        $ssga->send();
+        $ssga->reset();
 
-	$podcast_filetype=$fileData[0];
-	$filemimetype=$fileData[1];
-	$isFileSupported = $fileData[2];
+        // If we have a mobile device, force the download
+        if (detectMobileDevice())
+        {
+            $file_media = divideFilenameFromExtension($filename);
+            $fileData = checkFileType($file_media[1],$absoluteurl);
 
-	// SECURITY OPTION: if extension is supported (file to download must have a known episode extension)
-	if ($isFileSupported == TRUE AND $file_media[1]==$podcast_filetype AND !publishInFuture($filename_path)) {
+            $podcast_filetype=$fileData[0];
+            $filemimetype=$fileData[1];
+            $isFileSupported = $fileData[2];
 
-	//// Headers
-		### required by internet explorer
-		if(ini_get('zlib.output_compression'))
-			ini_set('zlib.output_compression', 'Off');
-		###
+            // SECURITY OPTION: if extension is supported (file to download must have a known episode extension)
+            if ($isFileSupported == TRUE AND $file_media[1]==$podcast_filetype AND !publishInFuture($filename_path)) {
 
-		header("Pragma: public"); // required
-		header("Expires: 0");
-		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-		header("Cache-Control: private",false); // required for certain browsers 
-		header("Content-Type: $filemimetype");
-		header("Content-Disposition: attachment; filename=".basename($filename_path).";" );
-		header("Content-Transfer-Encoding: binary");
-		header("Content-Length: ".filesize($filename_path));
-		readfile("$filename_path");
-		exit();	
-	}
+            //// Headers
+                ### required by internet explorer
+                if(ini_get('zlib.output_compression'))
+                    ini_set('zlib.output_compression', 'Off');
+                ###
+
+                header("Pragma: public"); // required
+                header("Expires: 0");
+                header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+                header("Cache-Control: private",false); // required for certain browsers
+                header("Content-Type: $filemimetype");
+                header("Content-Disposition: attachment; filename=".basename($filename_path).";" );
+                header("Content-Transfer-Encoding: binary");
+                header("Content-Length: ".filesize($filename_path));
+                readfile("$filename_path");
+                exit();
+            }
+        } else {
+            // Just redirect to the full file
+            header('Location: ' . $filename_path);
+        }
+    }
 }
 
 ////else do nothing - no feedback
