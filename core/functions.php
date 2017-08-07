@@ -875,13 +875,6 @@ function detectMobileDevice() {
     $Blackberry= stripos($_SERVER['HTTP_USER_AGENT'],"BlackBerry") !== False;
     $Kindle= stripos($_SERVER['HTTP_USER_AGENT'],"Kindle") !== False;
 
-    echo $iPod;
-    echo $iPhone;
-    echo $iPad;
-    echo $Android;
-    echo $Blackberry;
-    echo $Kindle;
-
     //here we can do something with the mobile devices or just a subset of them
     if($iPod OR $iPhone OR $iPad OR $Android OR $webOS OR $Blackberry OR $Kindle){
     return TRUE;
