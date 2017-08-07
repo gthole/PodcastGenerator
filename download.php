@@ -76,7 +76,8 @@ if(isset($filename))
             }
         } else {
             // Just redirect to the full file
-            header('Location: ' . $filename_path);
+            header('Location: ' . $url.$upload_path.$filename);
+    		exit();
         }
     }
 }

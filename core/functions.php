@@ -456,120 +456,120 @@ function showPodcastEpisodes($all,$category) {
                 ////If episode is supported and has a related xml db, and if it's not set to a future date OR if it's set for a future date but you are logged in as admin
                 if (($thisPodcastEpisode[0]==TRUE AND !publishInFuture($thisPodcastEpisode[1])) OR ($thisPodcastEpisode[0]==TRUE AND publishInFuture($thisPodcastEpisode[1]) AND isUserLogged())) {
 
-                	////Parse XML data related to the episode
-                	// NB. Function parseXMLepisodeData returns: [0] episode title, [1] short description, [2] long description, [3] image associated, [4] iTunes keywords, [5] Explicit language,[6] Author's name,[7] Author's email,[8] PG category 1, [9] PG category 2, [10] PG category 3, [11] file_info_size, [12] file_info_duration, [13] file_info_bitrate, [14] file_info_frequency, [15] embedded image in mp3
-                	$thisPodcastEpisodeData = parseXMLepisodeData($thisPodcastEpisode[2]);
+                    ////Parse XML data related to the episode
+                    // NB. Function parseXMLepisodeData returns: [0] episode title, [1] short description, [2] long description, [3] image associated, [4] iTunes keywords, [5] Explicit language,[6] Author's name,[7] Author's email,[8] PG category 1, [9] PG category 2, [10] PG category 3, [11] file_info_size, [12] file_info_duration, [13] file_info_bitrate, [14] file_info_frequency, [15] embedded image in mp3
+                    $thisPodcastEpisodeData = parseXMLepisodeData($thisPodcastEpisode[2]);
 
-                	////if category is specified as a parameter of this function
-                	if (isset($category) AND $category != NULL) {
-                		//if category is not associated to the current episode
-                		if ($category != $thisPodcastEpisodeData[8] AND $category != $thisPodcastEpisodeData[9] AND $category != $thisPodcastEpisodeData[10]) {
-                			continue; //STOP this cycle and start a new one
-                		} else {
-                			$CounterEpisodesInCategory++; // Incremente episodes counter
-                		}
-                	}
+                    ////if category is specified as a parameter of this function
+                    if (isset($category) AND $category != NULL) {
+                        //if category is not associated to the current episode
+                        if ($category != $thisPodcastEpisodeData[8] AND $category != $thisPodcastEpisodeData[9] AND $category != $thisPodcastEpisodeData[10]) {
+                            continue; //STOP this cycle and start a new one
+                        } else {
+                            $CounterEpisodesInCategory++; // Incremente episodes counter
+                        }
+                    }
 
-                	//// Start constructing episode HTML output
+                    //// Start constructing episode HTML output
 
-                	//Theme engine PG version >= 2.0
-                	if (useNewThemeEngine($theme_path)) {
-                		//episodes per line in some themes (e.g. bootstrap)
-                		$numberOfEpisodesPerLine = 2;
-                		//If the current episode number is multiple of $numberOfEpisodesPerLine
-                		if ($episodesCounter % $numberOfEpisodesPerLine != 0 OR $episodesCounter == count($fileNamesList)) {
-                			//open div with class row-fluid (theme based on bootstrap)
-                			//N.B. row-fluid is a CSS class for a div containing 1 or more episodes
-                			//$resulting_episodes .= '<div class="row-fluid">';
-                			$resulting_episodes .= '<div class="episode">';
-                		}
-                		$resulting_episodes .= '<div class="span6 col-md-6 6u episodebox">'; //open the single episode DIV
-                	}
-                	//If old Theme engine for <2.0 themes retro compatibility.
-                	else {
-                		$resulting_episodes .= '<div class="episode">'; //open the single episode DIV
-                	}
+                    //Theme engine PG version >= 2.0
+                    if (useNewThemeEngine($theme_path)) {
+                        //episodes per line in some themes (e.g. bootstrap)
+                        $numberOfEpisodesPerLine = 2;
+                        //If the current episode number is multiple of $numberOfEpisodesPerLine
+                        if ($episodesCounter % $numberOfEpisodesPerLine != 0 OR $episodesCounter == count($fileNamesList)) {
+                            //open div with class row-fluid (theme based on bootstrap)
+                            //N.B. row-fluid is a CSS class for a div containing 1 or more episodes
+                            //$resulting_episodes .= '<div class="row-fluid">';
+                            $resulting_episodes .= '<div class="episode">';
+                        }
+                        $resulting_episodes .= '<div class="span6 col-md-6 6u episodebox">'; //open the single episode DIV
+                    }
+                    //If old Theme engine for <2.0 themes retro compatibility.
+                    else {
+                        $resulting_episodes .= '<div class="episode">'; //open the single episode DIV
+                    }
 
-                	////Title
-                	$resulting_episodes .= '<h3 class="episode_title"><a href="?name='.$thisPodcastEpisode[5].'.'.$thisPodcastEpisode[3].'">'.$thisPodcastEpisodeData[0];
-                	if (isItAvideo($thisPodcastEpisode[3])) $resulting_episodes .= '&nbsp;<i class="fa fa-youtube-play"></i>'; //add video icon
-                	$resulting_episodes .= '</a></h3>';
+                    ////Title
+                    $resulting_episodes .= '<h3 class="episode_title"><a href="?name='.$thisPodcastEpisode[5].'.'.$thisPodcastEpisode[3].'">'.$thisPodcastEpisodeData[0];
+                    if (isItAvideo($thisPodcastEpisode[3])) $resulting_episodes .= '&nbsp;<i class="fa fa-youtube-play"></i>'; //add video icon
+                    $resulting_episodes .= '</a></h3>';
 
-                	////Date
-                	$resulting_episodes .= '<p class="episode_date">';
-                	$thisEpisodeDate = filemtime($thisPodcastEpisode[1]);
-                	if ($thisEpisodeDate > time()) { //if future date
-                	$resulting_episodes .= '<i class="fa fa-clock-o fa-2x"></i>  ';	//show watch icon
-                	}
-                	$episodeDate = date ($dateformat, $thisEpisodeDate);
-                	$resulting_episodes .= $episodeDate.'</p>';
-
-
-                	//// Edit/Delete button for logged user (i.e. admin)
-                	if (isUserLogged()) {
-                		$resulting_episodes .= '<p><a class="btn btn-inverse btn-xs btn-mini" href="?p=admin&amp;do=edit&amp;=episode&amp;name='.urlencode($thisPodcastEpisode[5]).'.'.$thisPodcastEpisode[3].'">'._("Edit / Delete").'</a></p>';
-                	}
+                    ////Date
+                    $resulting_episodes .= '<p class="episode_date">';
+                    $thisEpisodeDate = filemtime($thisPodcastEpisode[1]);
+                    if ($thisEpisodeDate > time()) { //if future date
+                    $resulting_episodes .= '<i class="fa fa-clock-o fa-2x"></i>  ';    //show watch icon
+                    }
+                    $episodeDate = date ($dateformat, $thisEpisodeDate);
+                    $resulting_episodes .= $episodeDate.'</p>';
 
 
-                			//Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
-                		if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
-                		$resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" alt="'.$thisPodcastEpisodeData[0].'" />';
-                		}
-                		else if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.png')) {
-                		$resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" alt="'.$thisPodcastEpisodeData[0].'" />';
-                		}
+                    //// Edit/Delete button for logged user (i.e. admin)
+                    if (isUserLogged()) {
+                        $resulting_episodes .= '<p><a class="btn btn-inverse btn-xs btn-mini" href="?p=admin&amp;do=edit&amp;=episode&amp;name='.urlencode($thisPodcastEpisode[5]).'.'.$thisPodcastEpisode[3].'">'._("Edit / Delete").'</a></p>';
+                    }
 
 
-                	//// Short Description
-                	$resulting_episodes .= '<p>'.$thisPodcastEpisodeData[1].'</p>';
+                            //Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
+                        if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
+                        $resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" alt="'.$thisPodcastEpisodeData[0].'" />';
+                        }
+                        else if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.png')) {
+                        $resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" alt="'.$thisPodcastEpisodeData[0].'" />';
+                        }
 
 
-                	////Buttons (More, Download, Watch)
-                	$resulting_episodes .= showButtons($thisPodcastEpisode[5],$thisPodcastEpisode[3],$url,$upload_dir,$episodesCounter,$thisPodcastEpisode[1],$enablestreaming);
+                    //// Short Description
+                    $resulting_episodes .= '<p>'.$thisPodcastEpisodeData[1].'</p>';
 
 
-                	////Other details (file type, duration, bitrate, frequency)
-                	//NB. read from XML DB (except file extension = $thisPodcastEpisode[3]).
-                	$episodeDetails = _('Filetype:')." ".strtoupper($thisPodcastEpisode[3]);
-                	if ($thisPodcastEpisodeData[11] != NULL) $episodeDetails .= ' - '._('Size:')." ".$thisPodcastEpisodeData[11]._("MB");
-
-                	if($thisPodcastEpisodeData[12]!=NULL) { // display file duration
-                	$episodeDetails .= " - "._("Duration:")." ".$thisPodcastEpisodeData[12]." "._("m");
-                	}
-                	if($thisPodcastEpisode[3]=="mp3" AND $thisPodcastEpisodeData[13] != NULL AND $thisPodcastEpisodeData[14] != NULL) { //if mp3 show bitrate and frequency
-                		$episodeDetails .= " (".$thisPodcastEpisodeData[13]." "._("kbps")." ".$thisPodcastEpisodeData[14]." "._("Hz").")";
-                	}
-                	$resulting_episodes .= '<p class="episode_info">'.$episodeDetails.'</p>';
+                    ////Buttons (More, Download, Watch)
+                    $resulting_episodes .= showButtons($thisPodcastEpisode[5],$thisPodcastEpisode[3],$url,$upload_dir,$episodesCounter,$thisPodcastEpisode[1],$enablestreaming);
 
 
-                	////Playes: audio (flash/html5) and video (html5), for supported files and browsers
-                	//if audio and video streaming is enabled in PG options
-                	if ($enablestreaming=="yes" AND !detectMobileDevice()) {
-                		$resulting_episodes .= showStreamingPlayers ($thisPodcastEpisode[5],$thisPodcastEpisode[3],$url,$upload_dir,$episodesCounter);
-                	}
-                	$isvideo = FALSE; //RESET isvideo for next episode
+                    ////Other details (file type, duration, bitrate, frequency)
+                    //NB. read from XML DB (except file extension = $thisPodcastEpisode[3]).
+                    $episodeDetails = _('Filetype:')." ".strtoupper($thisPodcastEpisode[3]);
+                    if ($thisPodcastEpisodeData[11] != NULL) $episodeDetails .= ' - '._('Size:')." ".$thisPodcastEpisodeData[11]._("MB");
+
+                    if($thisPodcastEpisodeData[12]!=NULL) { // display file duration
+                    $episodeDetails .= " - "._("Duration:")." ".$thisPodcastEpisodeData[12]." "._("m");
+                    }
+                    if($thisPodcastEpisode[3]=="mp3" AND $thisPodcastEpisodeData[13] != NULL AND $thisPodcastEpisodeData[14] != NULL) { //if mp3 show bitrate and frequency
+                        $episodeDetails .= " (".$thisPodcastEpisodeData[13]." "._("kbps")." ".$thisPodcastEpisodeData[14]." "._("Hz").")";
+                    }
+                    $resulting_episodes .= '<p class="episode_info">'.$episodeDetails.'</p>';
 
 
-                	////Social networks and (eventual) embedded code
-                	$resulting_episodes .= attachToEpisode($thisPodcastEpisode[5],$thisPodcastEpisode[3],$thisPodcastEpisodeData[0]);
+                    ////Playes: audio (flash/html5) and video (html5), for supported files and browsers
+                    //if audio and video streaming is enabled in PG options
+                    if ($enablestreaming=="yes" AND !detectMobileDevice()) {
+                        $resulting_episodes .= showStreamingPlayers ($thisPodcastEpisode[5],$thisPodcastEpisode[3],$url,$upload_dir,$episodesCounter);
+                    }
+                    $isvideo = FALSE; //RESET isvideo for next episode
 
 
-                	//Blank space as bottom margin (to be replaced with CSS style!)
-                	$resulting_episodes .= "<br />";
-                	//Close the single episode DIV
-                	$resulting_episodes .= "</div>";
-                	//Close div with class row-fluid (theme based on bootstrap). Theme engine >= 2.0
-                	if (useNewThemeEngine($theme_path) AND $episodesCounter % $numberOfEpisodesPerLine != 0 OR 		$episodesCounter == count($fileNamesList)) {
-                		$resulting_episodes .= "</div>"; //close class row-fluid (bootstrap)
-                	}
+                    ////Social networks and (eventual) embedded code
+                    $resulting_episodes .= attachToEpisode($thisPodcastEpisode[5],$thisPodcastEpisode[3],$thisPodcastEpisodeData[0]);
 
-                	$episodesCounter++; //increment counter
+
+                    //Blank space as bottom margin (to be replaced with CSS style!)
+                    $resulting_episodes .= "<br />";
+                    //Close the single episode DIV
+                    $resulting_episodes .= "</div>";
+                    //Close div with class row-fluid (theme based on bootstrap). Theme engine >= 2.0
+                    if (useNewThemeEngine($theme_path) AND $episodesCounter % $numberOfEpisodesPerLine != 0 OR         $episodesCounter == count($fileNamesList)) {
+                        $resulting_episodes .= "</div>"; //close class row-fluid (bootstrap)
+                    }
+
+                    $episodesCounter++; //increment counter
                 } // END - If episode is supported and has a related xml db
 
 
                 if ($episodesCounter <= $maxC AND $episodesCounter > $minC) {
-                	//Append this episode to the final output to return
-                	$finalOutputEpisodes .= $resulting_episodes;
+                    //Append this episode to the final output to return
+                    $finalOutputEpisodes .= $resulting_episodes;
                 }
 
             } //END - Else if this episode is shown in this page, or no limitation in $max_recent
@@ -643,99 +643,99 @@ function showSingleEpisode($singleEpisode,$justTitle) {
                 ////If episode is supported and has a related xml db, and if it's not set to a future date OR if it's set for a future date but you are logged in as admin
                 if (($thisPodcastEpisode[0]==TRUE AND !publishInFuture($thisPodcastEpisode[1])) OR ($thisPodcastEpisode[0]==TRUE AND publishInFuture($thisPodcastEpisode[1]) AND isUserLogged())) {
 
-                	////Parse XML data related to the episode
-                	// NB. Function parseXMLepisodeData returns: [0] episode title, [1] short description, [2] long description, [3] image associated, [4] iTunes keywords, [5] Explicit language,[6] Author's name,[7] Author's email,[8] PG category 1, [9] PG category 2, [10] PG category 3, [11] file_info_size, [12] file_info_duration, [13] file_info_bitrate, [14] file_info_frequency
-                	$thisPodcastEpisodeData = parseXMLepisodeData($thisPodcastEpisode[2]);
+                    ////Parse XML data related to the episode
+                    // NB. Function parseXMLepisodeData returns: [0] episode title, [1] short description, [2] long description, [3] image associated, [4] iTunes keywords, [5] Explicit language,[6] Author's name,[7] Author's email,[8] PG category 1, [9] PG category 2, [10] PG category 3, [11] file_info_size, [12] file_info_duration, [13] file_info_bitrate, [14] file_info_frequency
+                    $thisPodcastEpisodeData = parseXMLepisodeData($thisPodcastEpisode[2]);
 
-                	//// Return just title and end function here, if just title is required
-                	if (isset($justTitle) AND $justTitle == TRUE) return $thisPodcastEpisodeData[0]; //Function ends here
+                    //// Return just title and end function here, if just title is required
+                    if (isset($justTitle) AND $justTitle == TRUE) return $thisPodcastEpisodeData[0]; //Function ends here
 
-                	//// Start constructing episode HTML output
+                    //// Start constructing episode HTML output
 
-                	//Theme engine PG version >= 2.0 row-fluid
-                		$resulting_episodes .= '<div class="episode">';
-                		$resulting_episodes .= '<div class="span6 col-md-6 6u episodebox">'; //open the single episode DIV
-
-
-                	////Title
-                	$resulting_episodes .= '<h3 class="episode_title">'.$thisPodcastEpisodeData[0];
-                	if (isItAvideo($thisPodcastEpisode[3])) $resulting_episodes .= '&nbsp;<i class="fa fa-youtube-play"></i>'; //add video icon
-                	$resulting_episodes .= '</h3>';
+                    //Theme engine PG version >= 2.0 row-fluid
+                        $resulting_episodes .= '<div class="episode">';
+                        $resulting_episodes .= '<div class="span6 col-md-6 6u episodebox">'; //open the single episode DIV
 
 
-                	////Date
-                	$resulting_episodes .= '<p class="episode_date">';
-                	$thisEpisodeDate = filemtime($thisPodcastEpisode[1]);
-                	if ($thisEpisodeDate > time()) { //if future date
-                	$resulting_episodes .= '<i class="fa fa-clock-o fa-2x"></i>  ';	//show watch icon
-                	}
-                	$episodeDate = date ($dateformat, $thisEpisodeDate);
-                	$resulting_episodes .= $episodeDate.'</p>';
+                    ////Title
+                    $resulting_episodes .= '<h3 class="episode_title">'.$thisPodcastEpisodeData[0];
+                    if (isItAvideo($thisPodcastEpisode[3])) $resulting_episodes .= '&nbsp;<i class="fa fa-youtube-play"></i>'; //add video icon
+                    $resulting_episodes .= '</h3>';
 
 
-                	//// Edit/Delete button for logged user (i.e. admin)
-                	if (isUserLogged()) {
-                		$resulting_episodes .= '<p><a class="btn btn-inverse btn-xs btn-mini" href="?p=admin&amp;do=edit&amp;=episode&amp;name='.urlencode($thisPodcastEpisode[5]).'.'.$thisPodcastEpisode[3].'">'._("Edit / Delete").'</a></p>';
-                	}
+                    ////Date
+                    $resulting_episodes .= '<p class="episode_date">';
+                    $thisEpisodeDate = filemtime($thisPodcastEpisode[1]);
+                    if ($thisEpisodeDate > time()) { //if future date
+                    $resulting_episodes .= '<i class="fa fa-clock-o fa-2x"></i>  ';    //show watch icon
+                    }
+                    $episodeDate = date ($dateformat, $thisEpisodeDate);
+                    $resulting_episodes .= $episodeDate.'</p>';
 
 
-                				//Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
-                			if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
-                			$resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" alt="'.$thisPodcastEpisodeData[0].'" />';
-                			}
-                			else if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.png')) {
-                			$resulting_episodes .= '<img class="episode_image"  src="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" alt="'.$thisPodcastEpisodeData[0].'" />';
-                			}
-
-                	//// Show Long description if available, otherwise, short Description
-                	if ($thisPodcastEpisodeData[2] != NULL) $resulting_episodes .= '<div>'.ampersandEntitiesConvert(htmlspecialchars_decode($thisPodcastEpisodeData[2])).'</div>';
-                	else $resulting_episodes .= '<p>'.$thisPodcastEpisodeData[1].'</p>';
-
-                	/// Categories
-                	$resulting_episodes .= '<p><em>'._("Categories").'</em> ';
-                	if ($thisPodcastEpisodeData[8] != "") $resulting_episodes .= ' | <a href="?p=archive&amp;cat='.$thisPodcastEpisodeData[8] .'">'.categoryNameFromID($absoluteurl,$thisPodcastEpisodeData[8]).'</a>';
-                	if ($thisPodcastEpisodeData[9] != "") $resulting_episodes .= ' | <a href="?p=archive&amp;cat='.$thisPodcastEpisodeData[9].'">'.categoryNameFromID($absoluteurl,$thisPodcastEpisodeData[9]).'</a>';
-                	if ($thisPodcastEpisodeData[10] != "") $resulting_episodes .= ' | <a href="?p=archive&amp;cat='.$thisPodcastEpisodeData[10].'">'.categoryNameFromID($absoluteurl,$thisPodcastEpisodeData[10]).'</a>';
-                	$resulting_episodes .= '</p>';
+                    //// Edit/Delete button for logged user (i.e. admin)
+                    if (isUserLogged()) {
+                        $resulting_episodes .= '<p><a class="btn btn-inverse btn-xs btn-mini" href="?p=admin&amp;do=edit&amp;=episode&amp;name='.urlencode($thisPodcastEpisode[5]).'.'.$thisPodcastEpisode[3].'">'._("Edit / Delete").'</a></p>';
+                    }
 
 
-                	////Buttons (More, Download, Watch).
-                	$resulting_episodes .= showButtons($thisPodcastEpisode[5],$thisPodcastEpisode[3],$url,$upload_dir,"singleEpisode",$thisPodcastEpisode[1],$enablestreaming);
+                            	//Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
+                            if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
+                            $resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" alt="'.$thisPodcastEpisodeData[0].'" />';
+                            }
+                            else if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.png')) {
+                            $resulting_episodes .= '<img class="episode_image"  src="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" alt="'.$thisPodcastEpisodeData[0].'" />';
+                            }
+
+                    //// Show Long description if available, otherwise, short Description
+                    if ($thisPodcastEpisodeData[2] != NULL) $resulting_episodes .= '<div>'.ampersandEntitiesConvert(htmlspecialchars_decode($thisPodcastEpisodeData[2])).'</div>';
+                    else $resulting_episodes .= '<p>'.$thisPodcastEpisodeData[1].'</p>';
+
+                    /// Categories
+                    $resulting_episodes .= '<p><em>'._("Categories").'</em> ';
+                    if ($thisPodcastEpisodeData[8] != "") $resulting_episodes .= ' | <a href="?p=archive&amp;cat='.$thisPodcastEpisodeData[8] .'">'.categoryNameFromID($absoluteurl,$thisPodcastEpisodeData[8]).'</a>';
+                    if ($thisPodcastEpisodeData[9] != "") $resulting_episodes .= ' | <a href="?p=archive&amp;cat='.$thisPodcastEpisodeData[9].'">'.categoryNameFromID($absoluteurl,$thisPodcastEpisodeData[9]).'</a>';
+                    if ($thisPodcastEpisodeData[10] != "") $resulting_episodes .= ' | <a href="?p=archive&amp;cat='.$thisPodcastEpisodeData[10].'">'.categoryNameFromID($absoluteurl,$thisPodcastEpisodeData[10]).'</a>';
+                    $resulting_episodes .= '</p>';
 
 
-                	////Other details (file type, duration, bitrate, frequency)
-                	//NB. read from XML DB (except file extension = $thisPodcastEpisode[3]).
-                	$episodeDetails = _('Filetype:')." ".strtoupper($thisPodcastEpisode[3]);
-                	if ($thisPodcastEpisodeData[11] != NULL) $episodeDetails .= ' - '._('Size:')." ".$thisPodcastEpisodeData[11]._("MB");
-
-                	if($thisPodcastEpisodeData[12]!=NULL) { // display file duration
-                	$episodeDetails .= " - "._("Duration:")." ".$thisPodcastEpisodeData[12]." "._("m");
-                	}
-                	if($thisPodcastEpisode[3]=="mp3" AND $thisPodcastEpisodeData[13] != NULL AND $thisPodcastEpisodeData[14] != NULL) { //if mp3 show bitrate and frequency
-                		$episodeDetails .= " (".$thisPodcastEpisodeData[13]." "._("kbps")." ".$thisPodcastEpisodeData[14]." "._("Hz").")";
-                	}
-                	$resulting_episodes .= '<p class="episode_info">'.$episodeDetails.'</p>';
+                    ////Buttons (More, Download, Watch).
+                    $resulting_episodes .= showButtons($thisPodcastEpisode[5],$thisPodcastEpisode[3],$url,$upload_dir,"singleEpisode",$thisPodcastEpisode[1],$enablestreaming);
 
 
-                	////Playes: audio (flash/html5) and video (html5), for supported files and browsers
-                	//if audio and video streaming is enabled in PG options
-                	if ($enablestreaming=="yes" AND !detectMobileDevice()) {
-                		$resulting_episodes .= showStreamingPlayers ($thisPodcastEpisode[5],$thisPodcastEpisode[3],$url,$upload_dir,"singleEpisode");
-                	}
-                	$isvideo = FALSE; //RESET isvideo for next episode
+                    ////Other details (file type, duration, bitrate, frequency)
+                    //NB. read from XML DB (except file extension = $thisPodcastEpisode[3]).
+                    $episodeDetails = _('Filetype:')." ".strtoupper($thisPodcastEpisode[3]);
+                    if ($thisPodcastEpisodeData[11] != NULL) $episodeDetails .= ' - '._('Size:')." ".$thisPodcastEpisodeData[11]._("MB");
+
+                    if($thisPodcastEpisodeData[12]!=NULL) { // display file duration
+                    $episodeDetails .= " - "._("Duration:")." ".$thisPodcastEpisodeData[12]." "._("m");
+                    }
+                    if($thisPodcastEpisode[3]=="mp3" AND $thisPodcastEpisodeData[13] != NULL AND $thisPodcastEpisodeData[14] != NULL) { //if mp3 show bitrate and frequency
+                        $episodeDetails .= " (".$thisPodcastEpisodeData[13]." "._("kbps")." ".$thisPodcastEpisodeData[14]." "._("Hz").")";
+                    }
+                    $resulting_episodes .= '<p class="episode_info">'.$episodeDetails.'</p>';
 
 
-                	////Social networks and (eventual) embedded code
-                	$resulting_episodes .= attachToEpisode($thisPodcastEpisode[5],$thisPodcastEpisode[3],$thisPodcastEpisodeData[0]);
+                    ////Playes: audio (flash/html5) and video (html5), for supported files and browsers
+                    //if audio and video streaming is enabled in PG options
+                    if ($enablestreaming=="yes" AND !detectMobileDevice()) {
+                        $resulting_episodes .= showStreamingPlayers ($thisPodcastEpisode[5],$thisPodcastEpisode[3],$url,$upload_dir,"singleEpisode");
+                    }
+                    $isvideo = FALSE; //RESET isvideo for next episode
 
 
-                	//Close the single episode DIV
-                	$resulting_episodes .= "</div>";
-                	//Close div with class row-fluid (theme based on bootstrap). Theme engine >= 2.0
-                	$resulting_episodes .= "</div>"; //close class row-fluid (bootstrap)
+                    ////Social networks and (eventual) embedded code
+                    $resulting_episodes .= attachToEpisode($thisPodcastEpisode[5],$thisPodcastEpisode[3],$thisPodcastEpisodeData[0]);
 
-                	//Append this episode to the final output to return
-                	$finalOutputEpisodes .= $resulting_episodes;
+
+                    //Close the single episode DIV
+                    $resulting_episodes .= "</div>";
+                    //Close div with class row-fluid (theme based on bootstrap). Theme engine >= 2.0
+                    $resulting_episodes .= "</div>"; //close class row-fluid (bootstrap)
+
+                    //Append this episode to the final output to return
+                    $finalOutputEpisodes .= $resulting_episodes;
                 }
 
 
@@ -867,13 +867,20 @@ function random_str($size) {
 function detectMobileDevice() {
 
 //Some of the main mobile devices
-$iPod = stripos($_SERVER['HTTP_USER_AGENT'],"iPod");
-$iPhone = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone");
-$iPad = stripos($_SERVER['HTTP_USER_AGENT'],"iPad");
-$Android= stripos($_SERVER['HTTP_USER_AGENT'],"Android");
-$webOS= stripos($_SERVER['HTTP_USER_AGENT'],"webOS");
-$Blackberry= stripos($_SERVER['HTTP_USER_AGENT'],"BlackBerry");
-$Kindle= stripos($_SERVER['HTTP_USER_AGENT'],"Kindle");
+$iPod = stripos($_SERVER['HTTP_USER_AGENT'],"iPod") !== False;
+$iPhone = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone") !== False;
+$iPad = stripos($_SERVER['HTTP_USER_AGENT'],"iPad") !== False;
+$Android= stripos($_SERVER['HTTP_USER_AGENT'],"Android") !== False;
+$webOS= stripos($_SERVER['HTTP_USER_AGENT'],"webOS") !== False;
+$Blackberry= stripos($_SERVER['HTTP_USER_AGENT'],"BlackBerry") !== False;
+$Kindle= stripos($_SERVER['HTTP_USER_AGENT'],"Kindle") !== False;
+
+    echo $iPod;
+    echo $iPhone;
+    echo $iPad;
+    echo $Android;
+    echo $Blackberry;
+    echo $Kindle;
 
     //here we can do something with the mobile devices or just a subset of them
     if($iPod OR $iPhone OR $iPad OR $Android OR $webOS OR $Blackberry OR $Kindle){
@@ -1031,7 +1038,7 @@ function showButtons($filenameWithoutExtension,$podcast_filetype,$url,$upload_di
         else { // SHOW BUTTON DOWNLOAD THAT links directly to the file (so no problems with PHP forcing headers)
         //Write "watch" or "listen" in mobile devices.
             if (isItAvideo($podcast_filetype) == TRUE) {
-            $buttonsOutput .= '<a class="btn btn-default"     		href="'.$url.$upload_dir.urlencode($filenameWithoutExtension).'.'.$podcast_filetype.'"><i class="fa fa-youtube-play"></i> 	'._("Watch").'</a>';
+            $buttonsOutput .= '<a class="btn btn-default"             href="'.$url.$upload_dir.urlencode($filenameWithoutExtension).'.'.$podcast_filetype.'"><i class="fa fa-youtube-play"></i>     '._("Watch").'</a>';
             }
             //if it's audio, use the download script
             else if ($podcast_filetype=="mp3" OR $podcast_filetype=="m4a"){
@@ -1327,24 +1334,24 @@ function generatePodcastFeed ($outputInFile,$category,$manualRegeneration) {
                 // We check for data about episode size ($thisPodcastEpisodeData[11]) cause all the episodes should have it, if not, the XML was generated with a version of PG < 2.3
                 // We also check whether $thisPodcastEpisodeData[3] (image) is null. From PG 2.4 the image field can be a) a file name (for retro compatibility with older versions), b) 1 (mp3 parsed for embedded image. If image exists the file is extracted automatically in the images/ folder by the function retrieveMediaFileDetails)
                 if ($manualRegeneration AND $thisPodcastEpisodeData[11] == NULL OR $manualRegeneration AND $thisPodcastEpisodeData[3] == "") { //NB $thisPodcastEpisodeData[3] = to "" empty and not NULL (it exists but does not contain any value).
-                	//// Remapping data from parseXMLepisodeData to be sent as a parameter to writeEpisodeXMLDB
-                	$thisEpisodeDataToWriteInXML[0] = $thisPodcastEpisodeData[0]; // Title
-                	$thisEpisodeDataToWriteInXML[1] = $thisPodcastEpisodeData[1]; // Short Desc
-                	$thisEpisodeDataToWriteInXML[2] = $thisPodcastEpisodeData[2]; // Long Desc
+                    //// Remapping data from parseXMLepisodeData to be sent as a parameter to writeEpisodeXMLDB
+                    $thisEpisodeDataToWriteInXML[0] = $thisPodcastEpisodeData[0]; // Title
+                    $thisEpisodeDataToWriteInXML[1] = $thisPodcastEpisodeData[1]; // Short Desc
+                    $thisEpisodeDataToWriteInXML[2] = $thisPodcastEpisodeData[2]; // Long Desc
 
-                	//Image embedded or specified in the XML file is empty (no values)
-                	if ($thisPodcastEpisodeData[3] == "") $thisEpisodeDataToWriteInXML[3] = 1; // assign value of 1 (so in future it won't be processed)
-                	else $thisEpisodeDataToWriteInXML[3] = $thisPodcastEpisodeData[3]; // Image
+                    //Image embedded or specified in the XML file is empty (no values)
+                    if ($thisPodcastEpisodeData[3] == "") $thisEpisodeDataToWriteInXML[3] = 1; // assign value of 1 (so in future it won't be processed)
+                    else $thisEpisodeDataToWriteInXML[3] = $thisPodcastEpisodeData[3]; // Image
 
-                	$thisEpisodeDataToWriteInXML[4] = array($thisPodcastEpisodeData[8],$thisPodcastEpisodeData[9],$thisPodcastEpisodeData[10]); // Categories
-                	$thisEpisodeDataToWriteInXML[5] = $thisPodcastEpisodeData[4]; // Keywords
-                	$thisEpisodeDataToWriteInXML[6] = $thisPodcastEpisodeData[5]; // Explicit
-                	$thisEpisodeDataToWriteInXML[7] = $thisPodcastEpisodeData[6]; // Auth name
-                	$thisEpisodeDataToWriteInXML[8] = $thisPodcastEpisodeData[7]; // Auth email
+                    $thisEpisodeDataToWriteInXML[4] = array($thisPodcastEpisodeData[8],$thisPodcastEpisodeData[9],$thisPodcastEpisodeData[10]); // Categories
+                    $thisEpisodeDataToWriteInXML[5] = $thisPodcastEpisodeData[4]; // Keywords
+                    $thisEpisodeDataToWriteInXML[6] = $thisPodcastEpisodeData[5]; // Explicit
+                    $thisEpisodeDataToWriteInXML[7] = $thisPodcastEpisodeData[6]; // Auth name
+                    $thisEpisodeDataToWriteInXML[8] = $thisPodcastEpisodeData[7]; // Auth email
 
 //Episode size and data from GETID3 from retrieveMediaFileDetails function
 //NB retrieveMediaFileDetails returns: [0] $ThisFileSizeInMB, [1] $file_duration, [2] $file_bitrate, [3] $file_freq, [4] $thisFileTitleID3, [5] $thisFileArtistID3
-                	$episodeID3 = retrieveMediaFileDetails ($thisPodcastEpisode[1],$absoluteurl,$thisPodcastEpisode[5],$img_dir);
+                    $episodeID3 = retrieveMediaFileDetails ($thisPodcastEpisode[1],$absoluteurl,$thisPodcastEpisode[5],$img_dir);
 
     //Rewrite the XML data file of this episode (including the fileInfoPG tag)
     writeEpisodeXMLDB($thisEpisodeDataToWriteInXML,$absoluteurl,$thisPodcastEpisode[1],$thisPodcastEpisode[2],$thisPodcastEpisode[5],TRUE);
@@ -1354,7 +1361,7 @@ function generatePodcastFeed ($outputInFile,$category,$manualRegeneration) {
 
                 //// If category is specified, show just episodes belonging to it (if the current is not, skip this loop)
                 if (isset($category) AND $category != NULL AND $category != $thisPodcastEpisodeData[8] AND $category != $thisPodcastEpisodeData[9] AND $category != $thisPodcastEpisodeData[10]) {
-                	continue;
+                    continue;
                 }
 
 
@@ -1396,11 +1403,11 @@ function generatePodcastFeed ($outputInFile,$category,$manualRegeneration) {
 
                 //Image associated to single episode
                 if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
-                	$episodes_feed.= '<itunes:image href="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" />
+                    $episodes_feed.= '<itunes:image href="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" />
                 ';
                 }
                 else if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.png')) {
-                	$episodes_feed.= '<itunes:image href="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" />
+                    $episodes_feed.= '<itunes:image href="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" />
                 ';
                 }
 
