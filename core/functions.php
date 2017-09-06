@@ -1556,6 +1556,8 @@ function isUserLogged () {
 require_once($absoluteurl.'components/ss-ga.class.php');
 
 function postToGA($filename) {
+    if (file_exists("config.php")) include("config.php");
+
     // If we don't have an analytics ID or the user is logged in, don't post to GA
     if (isUserLogged() OR !isset($podcast_ga_id)) {
         return False;
