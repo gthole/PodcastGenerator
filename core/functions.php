@@ -511,13 +511,15 @@ function showPodcastEpisodes($all,$category) {
                     }
 
 
-                            //Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
+                    //Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
+                    if (false) {
                         if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
-                        $resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" alt="'.$thisPodcastEpisodeData[0].'" />';
-                        }
+                            $resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" alt="'.$thisPodcastEpisodeData[0].'" />';
+                            }
                         else if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.png')) {
-                        $resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" alt="'.$thisPodcastEpisodeData[0].'" />';
+                            $resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" alt="'.$thisPodcastEpisodeData[0].'" />';
                         }
+                    }
 
 
                     //// Short Description
@@ -679,13 +681,15 @@ function showSingleEpisode($singleEpisode,$justTitle) {
                     }
 
 
-                                //Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
-                            if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
+                    //Show Image embedded in the mp3 file or image associated in the images/ folder from previous versions of PG (i.e. 1.4-) - Just jpg and png extension supported
+                    if (false) {
+                        if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
                             $resulting_episodes .= '<img class="episode_image" src="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" alt="'.$thisPodcastEpisodeData[0].'" />';
-                            }
-                            else if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.png')) {
+                        }
+                        else if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.png')) {
                             $resulting_episodes .= '<img class="episode_image"  src="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" alt="'.$thisPodcastEpisodeData[0].'" />';
-                            }
+                        }
+                    }
 
                     //// Show Long description if available, otherwise, short Description
                     if ($thisPodcastEpisodeData[2] != NULL) $resulting_episodes .= '<div>'.ampersandEntitiesConvert(htmlspecialchars_decode($thisPodcastEpisodeData[2])).'</div>';
@@ -1392,8 +1396,6 @@ function generatePodcastFeed ($outputInFile,$category,$manualRegeneration) {
                 ';
                 }
 
-
-
                 //Image associated to single episode
                 if (file_exists($absoluteurl.$img_dir.$thisPodcastEpisode[5].'.jpg')) {
                     $episodes_feed.= '<itunes:image href="'.$url.$img_dir.$thisPodcastEpisode[5].'.jpg" />
@@ -1403,8 +1405,6 @@ function generatePodcastFeed ($outputInFile,$category,$manualRegeneration) {
                     $episodes_feed.= '<itunes:image href="'.$url.$img_dir.$thisPodcastEpisode[5].'.png" />
                 ';
                 }
-
-
 
                 //// Author
                 // If no author specified, use default author from config.php
@@ -1566,6 +1566,7 @@ function postToGA($filename) {
 
     // Set up the ssga client
     $ssga = new ssga($podcast_ga_id, $pg_domain);
+
     // Post to GA
     $ssga->set_event('Downloads', 'Download Type', $filename);
     $ssga->send();
@@ -1573,9 +1574,6 @@ function postToGA($filename) {
 
     return True;
 }
-
-
-
 
 
 // Is the episode set to a future date?
