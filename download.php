@@ -65,12 +65,8 @@ if(isset($filename))
             }
         } else {
             // Just redirect to the full file
-            header('Location: ' . $url.$upload_dir.$filename);
+            header('Location: '.$url.$upload_dir.$filename);
             exit();
         }
     }
 }
-
-////else do nothing - no feedback
-//else { }
-?>
